@@ -114,10 +114,12 @@ Template rendering code used by run_rally.py
 {{'{%'}} import '{{ file }}' as {{ macro }} {{ '%}' }}
 {% endfor %}
 
+{% set templates = context().get('templates', {}) %}
+{{ '{%' }} set scenarios = {{ templates.values() }} {{ '%}' }}
 {{ '{%' }} for s in scenarios {{ '%}' }}
 
 {% set if_or_elif = 'if' %}
-{% for macro in context().get('templates', {}).values() %}
+{% for macro in templates.values() %}
 {{ '{%' }} {{ if_or_elif }} s == '{{ macro }}' {{ '-%}' }}
 {{ '{{' }} scenario({{ macro }}.{{ macro }}) {{ '}}' }}
 {% set if_or_elif = 'elif' %}
