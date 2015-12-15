@@ -1,5 +1,0 @@
----
-  ComplexScenario.create_and_list_security_group_rule:
-    -
-      args:
-        rules_per_security_group: 10

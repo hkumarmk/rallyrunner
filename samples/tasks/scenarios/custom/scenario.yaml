@@ -94,14 +94,6 @@ All code which need to be exposed to rally template must be within {% raw %}
         {{ context_quota() }}
 {%- endmacro %}
 
-{#
-set scenarios
-#}
-
-{% macro scenario(name) -%}
-{{ name() }}
-      {{ details() }}
-{%- endmacro %}
 {%- endraw %}
 {#
 All the code before {% endraw %} is part of rally scenario template
@@ -110,19 +102,32 @@ All the code before {% endraw %} is part of rally scenario template
 {#
 Template rendering code used by run_rally.py
 #}
-{% for file, macro in context().get('templates', {}).items() %}
+
+{% set templates = context().get('scenarios', {}) %}
+
+{% for file, macro in templates.items() %}
 {{'{%'}} import '{{ file }}' as {{ macro }} {{ '%}' }}
 {% endfor %}
 
-{% set templates = context().get('templates', {}) %}
 {{ '{%' }} set scenarios = {{ templates.values() }} {{ '%}' }}
+
 {{ '{%' }} for s in scenarios {{ '%}' }}
 
+{# {{ '{%' }} if scenarios is mapping {{ '%}' }} #}
 {% set if_or_elif = 'if' %}
-{% for macro in templates.values() %}
+{% for d in context().get('scenario_details', {}).values() %}
+{% if d is mapping %}
+{% for macro, args in d.items() %}
 {{ '{%' }} {{ if_or_elif }} s == '{{ macro }}' {{ '-%}' }}
-{{ '{{' }} scenario({{ macro }}.{{ macro }}) {{ '}}' }}
-{% set if_or_elif = 'elif' %}
-{% endfor %}
+{{ '{{' }} {{ macro }}.{{ macro }}({{ args }}) {{ '}}' }}
+      {{ '{{' }} details() {{ '}}' }}
+{%- endfor -%}
+{%- else -%}
+{{ '{%' }} {{ if_or_elif }} s == '{{ d }}' {{ '-%}' }}
+{{ '{{' }} {{ d }}.{{ d }}() {{ '}}' }}
+      {{ '{{' }} details() {{ '}}' }}
+{%- endif -%}
+{%- set if_or_elif = 'elif' -%}
+{%- endfor -%}
 {{ '{%' }} endif {{ '-%}' }}
 {{ '{%' }} endfor {{ '-%}' }}

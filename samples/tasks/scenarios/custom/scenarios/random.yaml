@@ -1,4 +1,4 @@
-{% macro random() -%}
+{% macro random(image_id, flavor_id) -%}
   RandomScenarios.random_scenarios:
     -
       args:
@@ -42,9 +42,9 @@
                params:
                  network: __macro__rs_network
                  subnet_create_args: {}
-#            - rs_boot_server:
-#               params:
-#                 image_id: '07ae2ee8-c177-4877-b5d5-5cafccf917d6'
-#                 flavor_id: 1
-#                 nic_net_id: __macro__rs_network_id
+            - rs_boot_server:
+               params:
+                 image_id: {{ image_id }}
+                 flavor_id: {{ flavor_id }}
+                 nic_net_id: __macro__rs_network_id
 {%- endmacro %}
