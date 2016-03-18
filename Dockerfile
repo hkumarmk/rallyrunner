@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM hkumar/ubuntu-14.04.2:latest
 MAINTAINER Harish Kumar <hkumar@d4devops.org>
 
 ARG http_proxy
