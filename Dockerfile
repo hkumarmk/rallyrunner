@@ -3,6 +3,8 @@ MAINTAINER Harish Kumar <hkumar@d4devops.org>
 
 ARG http_proxy
 ARG DEBIAN_FRONTEND=noninteractive
+ARG RALLYRUNNER_REPO=https://github.com/hkumarmk/rallyrunner.git
+ARG RALLYRUNNER_REF=master
 
 # install prereqs
 RUN apt-get update && apt-get install --yes wget python
@@ -32,6 +34,12 @@ RUN wget -q -O- https://raw.githubusercontent.com/openstack/rally/master/install
   && \
   apt-get -y autoremove && \
   apt-get clean
+
+RUN git clone $RALLYRUNNER_REPO /opt/rally; \
+    cd /opt/rally ; \
+    git checkout $RALLYRUNNER_REF; \
+    git reset --hard; \
+    rm -fr .git
 
 COPY docker_entrypoint.sh /entrypoint.sh
 RUN chmod a+x /entrypoint.sh
